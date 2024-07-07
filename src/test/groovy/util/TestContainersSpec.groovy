@@ -2,6 +2,7 @@ package util
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import dasniko.testcontainers.keycloak.KeycloakContainer
 import groovy.sql.Sql
 import org.jetbrains.annotations.NotNull
 import org.junit.runner.Description
@@ -23,6 +24,9 @@ class TestContainersSpec extends Specification {
 
     @Shared
     public static MySQLContainer mySQL
+
+    @Shared
+    public static KeycloakContainer keycloak
 
     public static Network network = createReusableNetwork('e-banking-network')
 
@@ -46,7 +50,6 @@ class TestContainersSpec extends Specification {
         ScriptUtils.runInitScript(delegate, "cleanup.sql")
         ScriptUtils.runInitScript(delegate, "schema.sql")
 
-
         sql = Sql.newInstance(mySQL.jdbcUrl, mySQL.username, mySQL.password, mySQL.driverClassName)
 
         HikariConfig config = new HikariConfig()
@@ -56,6 +59,12 @@ class TestContainersSpec extends Specification {
         config.driverClassName = mySQL.driverClassName
         config.maximumPoolSize = 5
         dataSource = new HikariDataSource(config)
+
+        keycloak = new KeycloakContainer().withRealmImportFile("realm-export.json").withNetwork(network)
+        keycloak.start()
+
+        String keycloakIssuerUri = keycloak.getAuthServerUrl() + "/realms/eBanking"
+        System.setProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri", keycloakIssuerUri)
     }
 
     static Network createReusableNetwork(String name) {
