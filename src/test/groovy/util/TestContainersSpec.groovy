@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 import org.slf4j.LoggerFactory
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.DockerClientFactory
 import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.containers.Network
@@ -22,10 +24,8 @@ import java.time.Duration
 
 class TestContainersSpec extends Specification {
 
-    @Shared
-    public static MySQLContainer mySQL
+    public MySQLContainer mySQL
 
-    @Shared
     public static KeycloakContainer keycloak
 
     public static Network network = createReusableNetwork('e-banking-network')
@@ -41,7 +41,7 @@ class TestContainersSpec extends Specification {
                 .withDatabaseName('E_BANKING_SYSTEM')
                 .withExposedPorts(3306)
                 .withNetwork(network)
-                .withReuse(true).withInitScript()
+                .withReuse(true)
                 .withStartupTimeout(Duration.ofMinutes(3))
                 .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("mySQL")))
         mySQL.start()
@@ -60,11 +60,25 @@ class TestContainersSpec extends Specification {
         config.maximumPoolSize = 5
         dataSource = new HikariDataSource(config)
 
-        keycloak = new KeycloakContainer().withRealmImportFile("realm-export.json").withNetwork(network)
+        keycloak = new KeycloakContainer('quay.io/keycloak/keycloak:25.0.1')
+                .withRealmImportFile('realm-export.json')
+                .withNetwork(network)
+                .withReuse(true)
+                .withStartupTimeout(Duration.ofMinutes(3))
+                .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger('keycloak')))
         keycloak.start()
 
         String keycloakIssuerUri = keycloak.getAuthServerUrl() + "/realms/eBanking"
         System.setProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri", keycloakIssuerUri)
+    }
+
+    @DynamicPropertySource
+    static void registerKeycloakProperties(DynamicPropertyRegistry registry) {
+        registry.add('spring.security.oauth2.resourceserver.jwt.issuer-uri',
+                () -> keycloak.getAuthServerUrl() + "/realms/eBanking")
+        registry.add('keycloak.auth-server-url', keycloak::getAuthServerUrl)
+        registry.add('keycloak.realm', () -> "eBanking")
+        registry.add('keycloak.resource', () -> "e-banking-system")
     }
 
     static Network createReusableNetwork(String name) {

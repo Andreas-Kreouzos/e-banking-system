@@ -3,12 +3,10 @@ package integration.com.ebanking.system
 import com.ebanking.system.entity.User
 import com.ebanking.system.exception.UserNotFoundException
 import com.ebanking.system.repository.UserRepositoryImpl
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.dao.DuplicateKeyException
 import spock.lang.Subject
 import util.TestContainersSpec
 
-@SpringBootTest
 class UserRepositoryImplSpec extends TestContainersSpec {
 
     @Subject
