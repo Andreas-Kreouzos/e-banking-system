@@ -55,7 +55,6 @@ class HttpClientSetup {
 
         String requestBody = "grant_type=$GRANT_TYPE&client_id=$CLIENT_ID&username=$CLIENT_USERNAME&password=$CLIENT_PASSWORD"
 
-        println(URL_JWT_TOKEN)
         def response = client.send(HttpRequest.newBuilder()
                 .uri(new URI(URL_JWT_TOKEN))
                 .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED)
@@ -64,11 +63,7 @@ class HttpClientSetup {
                 HttpResponse.BodyHandlers.ofString())
 
         def json = new JsonSlurper().parseText(response.body())
-        println(json.access_token)
 
         return json.access_token
     }
-
-
 }
-

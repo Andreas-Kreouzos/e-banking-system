@@ -24,9 +24,9 @@ import java.time.Duration
 
 class TestContainersSpec extends Specification {
 
-    public MySQLContainer mySQL
+    static MySQLContainer mySQL
 
-    public static KeycloakContainer keycloak
+    static KeycloakContainer keycloak
 
     public static Network network = createReusableNetwork('e-banking-network')
 
@@ -36,7 +36,8 @@ class TestContainersSpec extends Specification {
     @Shared
     DataSource dataSource
 
-    def setup() {
+    //TODO: Fix this for UserRepositoryImplSpec
+    def setupSpec() {
         mySQL = new MySQLContainer<>("mysql:8.0.28")
                 .withDatabaseName('E_BANKING_SYSTEM')
                 .withExposedPorts(3306)
@@ -74,6 +75,10 @@ class TestContainersSpec extends Specification {
 
     @DynamicPropertySource
     static void registerKeycloakProperties(DynamicPropertyRegistry registry) {
+        registry.add('spring.datasource.url', mySQL::getJdbcUrl)
+        registry.add('spring.datasource.username', mySQL::getUsername)
+        registry.add('spring.datasource.password', mySQL::getPassword)
+        registry.add('spring.datasource.driver-class-name', mySQL::getDriverClassName)
         registry.add('spring.security.oauth2.resourceserver.jwt.issuer-uri',
                 () -> keycloak.getAuthServerUrl() + "/realms/eBanking")
         registry.add('keycloak.auth-server-url', keycloak::getAuthServerUrl)
