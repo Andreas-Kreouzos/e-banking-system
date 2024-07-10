@@ -22,6 +22,11 @@ class UserRepositoryImplSpec extends TestContainersSpec {
         repository = new UserRepositoryImpl(dataSource)
     }
 
+    def cleanup() {
+        sql.execute("DELETE FROM E_BANKING_SYSTEM.USERS")
+        sql.execute("ALTER TABLE E_BANKING_SYSTEM.USERS AUTO_INCREMENT = 1")
+    }
+
     def 'Successfully insert a new user in the database'() {
         given: 'a user'
         def user = new User(username, password, firstName, lastName, email)
