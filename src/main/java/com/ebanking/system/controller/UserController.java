@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/demo")
 public class UserController {
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('client_user')")
     public String hello() {
         return "{\"message\": \"Hello World from Keycloak\"}";
     }
 
-    @GetMapping(value = "/hello-2", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('client_admin')")
     public String hello2() {
         return "{\"message\": \"Hello World from Admin Keycloak\"}";

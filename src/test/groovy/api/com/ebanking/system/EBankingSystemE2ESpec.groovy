@@ -32,7 +32,7 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
 
     def 'Successfully call the user endpoint with valid JWT token'() {
         given: 'the application uri'
-        def uri = new URI("http://localhost:${port}/api/v1/demo")
+        def uri = new URI("http://localhost:${port}/api/v1/demo/user")
 
         when: 'calling the endpoint'
         def request = HttpClientSetup.createGetRequest(uri)
@@ -44,5 +44,17 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
         and: 'contain the message specified'
         def responseBody = new JsonSlurper().parseText(response.body())
         responseBody.message == 'Hello World from Keycloak'
+    }
+
+    def '403 response when call the admin endpoint with user role'() {
+        given: 'the admin application uri'
+        def uri = new URI("http://localhost:${port}/api/v1/demo/admin")
+
+        when: 'calling the endpoint'
+        def request = HttpClientSetup.createGetRequest(uri)
+        def response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        then: 'the response should be 403 Forbidden'
+        response.statusCode() == 403
     }
 }
