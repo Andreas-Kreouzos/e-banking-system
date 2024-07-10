@@ -36,7 +36,6 @@ class TestContainersSpec extends Specification {
     @Shared
     DataSource dataSource
 
-    //TODO: Fix this for UserRepositoryImplSpec
     def setupSpec() {
         mySQL = new MySQLContainer<>("mysql:8.0.28")
                 .withDatabaseName('E_BANKING_SYSTEM')
@@ -68,9 +67,6 @@ class TestContainersSpec extends Specification {
                 .withStartupTimeout(Duration.ofMinutes(3))
                 .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger('keycloak')))
         keycloak.start()
-
-        String keycloakIssuerUri = keycloak.getAuthServerUrl() + "/realms/eBanking"
-        System.setProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri", keycloakIssuerUri)
     }
 
     @DynamicPropertySource
