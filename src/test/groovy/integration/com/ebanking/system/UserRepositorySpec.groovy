@@ -29,7 +29,7 @@ class UserRepositorySpec extends TestContainersSpec {
 
     def 'Successfully insert a new user in the database'() {
         given: 'a user'
-        def user = new User(username, password, firstName, lastName, email)
+        def user = new User(username: username, password: password, firstName: firstName, lastName: lastName, email: email)
 
         when: 'calling the insert method'
         def result = repository.insert(user)
@@ -46,10 +46,10 @@ class UserRepositorySpec extends TestContainersSpec {
 
     def 'Insert users with same username or email in the database fails'() {
         given: 'a first user'
-        def firstUser = new User(firstUsername, password, firstName, lastName, firstEmail)
+        def firstUser = new User(username: firstUsername, password: password, firstName: firstName, lastName: lastName, email: firstEmail)
 
         and: 'a second user'
-        def secondUser = new User(secondUsername, password, firstName, lastName, secondEmail)
+        def secondUser = new User(username: secondUsername, password: password, firstName: firstName, lastName: lastName, email: secondEmail)
 
         when: 'inserting the users'
         repository.insert(firstUser)
@@ -67,7 +67,7 @@ class UserRepositorySpec extends TestContainersSpec {
 
     def 'Successfully select a user by his id from the database'() {
         given: 'a user'
-        def user = new User(username, password, firstName, lastName, email)
+        def user = new User(username: username, password: password, firstName: firstName, lastName: lastName, email: email)
 
         and: 'insert the user in the database'
         repository.insert(user)
@@ -103,7 +103,7 @@ class UserRepositorySpec extends TestContainersSpec {
 
     def 'Successfully update a user in the database'() {
         given: 'a user'
-        def user = new User(username, password, firstName, lastName, email)
+        def user = new User(username: username, password: password, firstName: firstName, lastName: lastName, email: email)
 
         and: 'insert that user in the database'
         repository.insert(user)

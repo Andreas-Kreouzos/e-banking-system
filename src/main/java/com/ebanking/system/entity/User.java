@@ -1,7 +1,7 @@
 package com.ebanking.system.entity;
 
 /**
- * Represents a user for the application
+ * Represents the user entity of the application that gets stored in the database
  */
 public class User {
 
@@ -12,16 +12,11 @@ public class User {
     private String lastName;
     private String email;
 
-    public User(Long id, String username, String password, String firstName, String lastName, String email) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
+    public User() {
     }
 
-    public User(String username, String password, String firstName, String lastName, String email) {
+    public User(Long id, String username, String password, String firstName, String lastName, String email) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
