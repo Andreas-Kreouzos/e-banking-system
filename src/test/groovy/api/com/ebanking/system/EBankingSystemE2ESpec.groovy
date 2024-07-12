@@ -30,9 +30,9 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
         jsonb = JsonbBuilder.create()
     }
 
-    def 'Successfully call the user endpoint with valid JWT token'() {
+    def 'Successfully getting the user with valid JWT token'() {
         given: 'the application uri'
-        def uri = new URI("http://localhost:${port}/api/v1/demo/user")
+        def uri = new URI("http://localhost:${port}/api/v1/demo/user/1")
 
         when: 'calling the endpoint'
         def request = HttpClientSetup.createGetRequest(uri)
@@ -43,7 +43,11 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
 
         and: 'contain the message specified'
         def responseBody = new JsonSlurper().parseText(response.body())
-        responseBody.message == 'Hello World from Keycloak'
+        responseBody.id == 1
+        responseBody.username == 'testuser'
+        responseBody.firstName == 'Test'
+        responseBody.lastName == 'User'
+        responseBody.email == 'testuser@example.com'
     }
 
     def '403 response when call the admin endpoint with user role'() {

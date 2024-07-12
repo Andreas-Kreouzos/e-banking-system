@@ -1,2 +1,2 @@
-INSERT INTO E_BANKING_SYSTEM.USERS (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL)
-VALUES ('testuser', 'password', 'Test', 'User', 'testuser@example.com');
+INSERT INTO E_BANKING_SYSTEM.USERS (ID, USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL)
+VALUES (1, 'testuser', 'password', 'Test', 'User', 'testuser@example.com');

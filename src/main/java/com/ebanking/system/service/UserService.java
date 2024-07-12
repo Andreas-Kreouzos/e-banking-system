@@ -3,6 +3,7 @@ package com.ebanking.system.service;
 import com.ebanking.system.dto.UserResponse;
 import com.ebanking.system.entity.User;
 import com.ebanking.system.repository.IUserRepository;
+import org.springframework.stereotype.Service;
 
 import static com.ebanking.system.mapper.CommonMapper.mapToUserResponse;
 
@@ -11,6 +12,7 @@ import static com.ebanking.system.mapper.CommonMapper.mapToUserResponse;
  *
  * @author Andrekreou
  */
+@Service
 public class UserService implements IUserService {
 
     private final IUserRepository repository;
