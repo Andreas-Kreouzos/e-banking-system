@@ -2,15 +2,15 @@ package integration.com.ebanking.system
 
 import com.ebanking.system.entity.User
 import com.ebanking.system.exception.UserNotFoundException
-import com.ebanking.system.repository.UserRepositoryImpl
+import com.ebanking.system.repository.UserRepository
 import org.springframework.dao.DuplicateKeyException
 import spock.lang.Subject
 import util.TestContainersSpec
 
-class UserRepositoryImplSpec extends TestContainersSpec {
+class UserRepositorySpec extends TestContainersSpec {
 
     @Subject
-    UserRepositoryImpl repository
+    UserRepository repository
 
     def username = 'testUser'
     def password = 'myPassword'
@@ -19,7 +19,7 @@ class UserRepositoryImplSpec extends TestContainersSpec {
     def email = 'my.email@hotmail.com'
 
     def setup() {
-        repository = new UserRepositoryImpl(dataSource)
+        repository = new UserRepository(dataSource)
     }
 
     def cleanup() {
