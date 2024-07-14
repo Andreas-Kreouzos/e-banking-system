@@ -25,14 +25,17 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
     @Shared
     Jsonb jsonb
 
+    def appUrl
+
     def setup() {
+        appUrl = "http://localhost:${port}/api/v1/demo"
         client = HttpClient.newHttpClient()
         jsonb = JsonbBuilder.create()
     }
 
     def 'Successfully getting the user with valid JWT token'() {
-        given: 'the application uri'
-        def uri = new URI("http://localhost:${port}/api/v1/demo/user/1")
+        given: 'the endpoint to get the first user'
+        def uri = new URI("$appUrl/user/1")
 
         when: 'calling the endpoint'
         def request = HttpClientSetup.createGetRequest(uri)
@@ -50,15 +53,22 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
         responseBody.email == 'testuser@example.com'
     }
 
-    def '403 response when call the admin endpoint with user role'() {
-        given: 'the admin application uri'
-        def uri = new URI("http://localhost:${port}/api/v1/demo/admin")
+    def '403 response when call the #specified endpoint with user role'() {
+        given: 'resource endpoints for each request type'
+        def actions = [
+                adminRequest: { ->
+                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/admin")), HttpResponse.BodyHandlers.ofString())
+                }
+        ]
 
         when: 'calling the endpoint'
-        def request = HttpClientSetup.createGetRequest(uri)
-        def response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        def response = actions[actionType].call()
 
         then: 'the response should be 403 Forbidden'
         response.statusCode() == 403
+
+        where: 'various requests are being passed'
+        actionType     | specified
+        'adminRequest' | 'admin'
     }
 }
