@@ -13,6 +13,9 @@ import util.TestContainersSpec
 import java.net.http.HttpClient
 import java.net.http.HttpResponse
 
+import static util.HttpClientSetup.CLIENT_USERNAME
+import static util.HttpClientSetup.CLIENT_ADMIN_NAME
+
 @SpringBootTest(classes = EBankingSystemApplication, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class EBankingSystemE2ESpec extends TestContainersSpec {
 
@@ -38,7 +41,7 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
         def uri = new URI("$appUrl/user/1")
 
         when: 'calling the endpoint'
-        def request = HttpClientSetup.createGetRequest(uri)
+        def request = HttpClientSetup.createGetRequest(uri, CLIENT_USERNAME)
         def response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
         then: 'the response should be OK'
@@ -53,22 +56,26 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
         responseBody.email == 'testuser@example.com'
     }
 
-    def '403 response when call the #specified endpoint with user role'() {
-        given: 'resource endpoints for each request type'
+    def '403 response when call the #specified endpoint with #different role'() {
+        given: 'the endpoints called with the wrong role'
         def actions = [
                 adminRequest: { ->
-                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/admin")), HttpResponse.BodyHandlers.ofString())
+                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/admin"), CLIENT_USERNAME), HttpResponse.BodyHandlers.ofString())
+                },
+                userRequest : { ->
+                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/user/1"), CLIENT_ADMIN_NAME), HttpResponse.BodyHandlers.ofString())
                 }
         ]
 
-        when: 'calling the endpoint'
+        when: 'calling them'
         def response = actions[actionType].call()
 
         then: 'the response should be 403 Forbidden'
         response.statusCode() == 403
 
         where: 'various requests are being passed'
-        actionType     | specified
-        'adminRequest' | 'admin'
+        actionType     | specified | different
+        'adminRequest' | 'admin'   | 'user'
+        'userRequest'  | 'user'    | 'admin'
     }
 }

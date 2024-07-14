@@ -13,14 +13,15 @@ class HttpClientSetup {
 
     static final String CLIENT_ID = PropertyReader.getProperty('client.id')
     static final String CLIENT_USERNAME = PropertyReader.getProperty('client.username')
+    static final String CLIENT_ADMIN_NAME = PropertyReader.getProperty('client.admin.name')
     static final String CLIENT_PASSWORD = PropertyReader.getProperty('client.password')
     static final String GRANT_TYPE = PropertyReader.getProperty('grant.type')
     static final String URL_JWT_TOKEN = TestContainersSpec.keycloak.getAuthServerUrl() + "/realms/eBanking/protocol/openid-connect/token"
 
     static Jsonb jsonb = JsonbBuilder.create()
 
-    def static createGetRequest(URI uri) {
-        return getRequestBuilder(uri, "Bearer ${getAccessToken()}")
+    def static createGetRequest(URI uri, def username) {
+        return getRequestBuilder(uri, "Bearer ${getAccessToken(username)}")
     }
 
     def static getRequestBuilder(URI uri, String headerValues) {
@@ -37,8 +38,8 @@ class HttpClientSetup {
         return postRequestBuilder(uri, null, request)
     }
 
-    def static createPostRequest(URI uri, def request) {
-        return postRequestBuilder(uri, "Bearer ${getAccessToken()}", request)
+    def static createPostRequest(URI uri, def request, def username) {
+        return postRequestBuilder(uri, "Bearer ${getAccessToken(username)}", request)
     }
 
     def static postRequestBuilder(URI uri, String headerValues, def request) {
@@ -50,10 +51,10 @@ class HttpClientSetup {
                 .build()
     }
 
-    def static getAccessToken() {
+    def static getAccessToken(def username) {
         HttpClient client = HttpClient.newBuilder().build()
 
-        String requestBody = "grant_type=$GRANT_TYPE&client_id=$CLIENT_ID&username=$CLIENT_USERNAME&password=$CLIENT_PASSWORD"
+        String requestBody = "grant_type=$GRANT_TYPE&client_id=$CLIENT_ID&username=$username&password=$CLIENT_PASSWORD"
 
         def response = client.send(HttpRequest.newBuilder()
                 .uri(new URI(URL_JWT_TOKEN))
