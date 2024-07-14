@@ -36,31 +36,42 @@ class EBankingSystemE2ESpec extends TestContainersSpec {
         jsonb = JsonbBuilder.create()
     }
 
-    def 'Successfully getting the user with valid JWT token'() {
-        given: 'the endpoint to get the first user'
-        def uri = new URI("$appUrl/user/1")
+    def 'Successfully getting the users with valid JWT tokens'() {
+        given: 'the endpoints called with the appropriate roles'
+        def actions = [
+                userRequest : { ->
+                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/user/1"), CLIENT_USERNAME), HttpResponse.BodyHandlers.ofString())
+                },
+                adminRequest: { ->
+                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/admin/2"), CLIENT_ADMIN_NAME), HttpResponse.BodyHandlers.ofString())
+                }
+        ]
 
-        when: 'calling the endpoint'
-        def request = HttpClientSetup.createGetRequest(uri, CLIENT_USERNAME)
-        def response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        when: 'calling them'
+        def response = actions[actionType].call()
 
         then: 'the response should be OK'
         response.statusCode() == 200
 
-        and: 'contain the message specified'
+        and: 'response contain the correct parameters'
         def responseBody = new JsonSlurper().parseText(response.body())
-        responseBody.id == 1
-        responseBody.username == 'testuser'
-        responseBody.firstName == 'Test'
-        responseBody.lastName == 'User'
-        responseBody.email == 'testuser@example.com'
+        responseBody.id == id
+        responseBody.username == username
+        responseBody.firstName == firstName
+        responseBody.lastName == lastName
+        responseBody.email == email
+
+        where: 'various parameters are being provided'
+        actionType     | id | username  | firstName | lastName   | email
+        'userRequest'  | 1  | 'andreas' | 'Andreas' | 'Kreouzos' | 'andreas.kreouzos@hotmail.com'
+        'adminRequest' | 2  | 'toni'    | 'Toni'    | 'Stark'    | 'toni.stark@hotmail.com'
     }
 
     def '403 response when call the #specified endpoint with #different role'() {
         given: 'the endpoints called with the wrong role'
         def actions = [
                 adminRequest: { ->
-                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/admin"), CLIENT_USERNAME), HttpResponse.BodyHandlers.ofString())
+                    client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/admin/2"), CLIENT_USERNAME), HttpResponse.BodyHandlers.ofString())
                 },
                 userRequest : { ->
                     client.send(HttpClientSetup.createGetRequest(URI.create("$appUrl/user/1"), CLIENT_ADMIN_NAME), HttpResponse.BodyHandlers.ofString())

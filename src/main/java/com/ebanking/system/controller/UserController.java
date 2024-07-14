@@ -32,9 +32,10 @@ public class UserController {
         return ResponseEntity.status(OK).body(user);
     }
 
-    @GetMapping(value = "/admin", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/admin/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('client_admin')")
-    public String hello2() {
-        return "{\"message\": \"Hello World from Admin Keycloak\"}";
+    public ResponseEntity<UserResponse> hello2(@PathVariable("id") Long id) {
+        UserResponse user = service.getUserById(id);
+        return ResponseEntity.status(OK).body(user);
     }
 }
