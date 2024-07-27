@@ -1,9 +1,7 @@
 package com.ebanking.system.dto;
 
 /**
- * TODO: Add an appropriate description for the class
- *
- * @author Andrekreou
+ * Representation class that holds the response fields of a new user
  */
 public class UserResponse {
 
