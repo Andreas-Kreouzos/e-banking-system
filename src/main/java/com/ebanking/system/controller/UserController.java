@@ -4,6 +4,8 @@ import com.ebanking.system.dto.UserRequest;
 import com.ebanking.system.dto.UserResponse;
 import com.ebanking.system.service.IUserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,11 +20,13 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 /**
- * TODO: Add an appropriate description for the class
+ * Handles the incoming requests for the users
  */
 @RestController
 @RequestMapping("/api/v1/demo")
 public class UserController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     private final IUserService service;
 
@@ -38,9 +42,9 @@ public class UserController {
      */
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponse> registerUser(@RequestBody @Valid UserRequest userRequest) {
-        System.out.println("Received request: " + userRequest);
+        LOGGER.info("Received request: {}", userRequest);
         UserResponse user = service.createUser(userRequest);
-        System.out.println("Returning response: " + user);
+        LOGGER.info("Returning response: {}", user);
         return ResponseEntity.status(CREATED).body(user);
     }
 
