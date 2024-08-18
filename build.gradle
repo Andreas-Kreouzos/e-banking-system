@@ -22,21 +22,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	compileOnly 'jakarta.platform:jakarta.jakartaee-api:11.0.0-M4'
 
 	testImplementation 'org.apache.groovy:groovy-all:4.0.17'
 	testImplementation 'org.spockframework:spock-core:2.4-M4-groovy-4.0'
 	testImplementation 'org.spockframework:spock-spring:2.4-M4-groovy-4.0'
-	testImplementation 'jakarta.json.bind:jakarta.json.bind-api'
 	testImplementation 'org.eclipse:yasson'
 	testImplementation 'io.github.joke:spock-mockable:2.3.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:mysql'
 	testImplementation 'com.github.dasniko:testcontainers-keycloak:3.4.0'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
