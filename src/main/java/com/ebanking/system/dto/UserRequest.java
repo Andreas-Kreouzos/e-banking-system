@@ -166,21 +166,4 @@ public class UserRequest {
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
-
-    /**
-     * @return a string representation of the object
-     */
-    @Override
-    public String toString() {
-        return "UserRequest{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", afm='" + afm + '\'' +
-                ", birthDate='" + birthDate + '\'' +
-                ", mobileNumber='" + mobileNumber + '\'' +
-                ", cardNumber='" + cardNumber + '\'' +
-                '}';
-    }
 }
